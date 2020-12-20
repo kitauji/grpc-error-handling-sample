@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package greeter;
+option go_package = ".;greeter";
+
+import "google/rpc/status.proto";
+
+service Greeter {
+  // Unary RPC
+  rpc SayHelloUN (HelloRequest) returns (HelloResponse) {}
+
+  // Server streaming RPC
+  rpc SayHelloSS (HelloRequest) returns (stream HelloResponse) {}
+
+  // Client streaming RPC
+  rpc SayHelloCS (stream HelloRequest) returns (HelloResponse) {}
+
+  // Bi-directional streaming RPC
+  // rpc SayHelloBI (stream HelloRequest) returns (stream HelloResponse) {}
+  rpc SayHelloBI (stream HelloRequest) returns (stream StreamingHelloResponse) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+message HelloResponse {
+  string result = 1;
+}
+
+// アプリケーション独自のカスタムエラーのつもり
+message CustomError {
+  int32 errorNo = 1;
+  string description = 2;
+}
+
+//message StreamingHelloResponse {
+//  string result = 1;
+//  google.rpc.Status status = 2;
+//}
+
+message StreamingHelloResponse {
+  oneof response {
+    string result = 1;
+    google.rpc.Status status = 2;
+  }
+}
